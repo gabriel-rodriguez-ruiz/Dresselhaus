@@ -149,3 +149,23 @@ def GetAnalyticEnergies(k_x_values, k_y_values, phi_x_values, phi_y_values, w_0,
                     for m in range(4):
                         energies[i, j, k, l, m] = 1/2 * np.real(get_cuartic_solution(c_0, c_1, c_2, c_3)[m])  #1/2 because HBdG not considered in the coefficients
     return energies
+
+def GetSumOfPositiveAnalyticEnergy(k_x, k_y, phi_x, phi_y, w_0, mu, Delta, B_x, B_y, Lambda_R, Lambda_D):
+    """
+    H = A K[3, 0] + B K[0, 0] - mu K[3, 0] + C K[0, 2] + 
+            D K[0, 1] + Delta K[1, 0] + E K[3, 2] + F K[3, 1]
+    """
+    positive_energy = []
+    A = -2*w_0 * (np.cos(k_x)*np.cos(phi_x) + np.cos(k_y)*np.cos(phi_y))
+    B = 2*w_0 * (np.sin(k_x)*np.sin(phi_x) + np.sin(k_y)*np.sin(phi_y))
+    C = -B_y + Lambda_R * np.cos(k_x)*np.sin(phi_x) + Lambda_D * np.cos(k_y)*np.sin(phi_y)
+    D = -B_x - Lambda_R * np.cos(k_y)*np.sin(phi_y) - Lambda_D * np.cos(k_x)*np.sin(phi_x)
+    E = Lambda_R * np.sin(k_x)*np.cos(phi_x) + Lambda_D * np.sin(k_y)*np.cos(phi_y)
+    F = -Lambda_R * np.sin(k_y)*np.cos(phi_y) - Lambda_D * np.sin(k_x)*np.cos(phi_x) 
+    coefficient_array = get_coefficient_array(A, B, C, D, E, F, Delta, mu)      #1/2 because HBdG not considered in the coefficients
+    c_0, c_1, c_2, c_3, c_4 = coefficient_array
+    for m in range(4):
+        energy = 1/2 * np.real(get_cuartic_solution(c_0, c_1, c_2, c_3)[m])  #1/2 because HBdG not considered in the coefficients
+        if energy>0:
+            positive_energy.append(energy)
+    return np.sum(np.array(positive_energy))

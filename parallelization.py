@@ -10,7 +10,7 @@ import multiprocessing
 from pathlib import Path
 from pauli_matrices import tau_0, sigma_0, tau_z, sigma_x, sigma_y, tau_y, tau_x
 import scipy
-from analytic_energy import GetAnalyticEnergies
+from analytic_energy import GetAnalyticEnergies, GetSumOfPositiveAnalyticEnergy
 
 def get_Hamiltonian(k_x, k_y, phi_x, phi_y, w_0, mu, Delta, B_x, B_y, Lambda):
     """ Periodic Hamiltonian in x and y with flux.
@@ -60,37 +60,66 @@ def get_Energy_without_SOC(k_x_values, k_y_values, phi_x_values, phi_y_values, w
                     energies[i, j, k, l, 3] = 1/2 * (b + np.sqrt(B_square + Delta**2 + 2*np.sqrt(B_square * ((a-mu)**2 + Delta**2)) + (a-mu)**2))
     return energies
 
-def Fermi_function(energy, beta, T=False):
+# def Fermi_function(energy, beta, T=False):
+#     if T==False:
+#         return np.zeros_like(energy)
+#     else:
+#         #return 1 / (np.exp(beta*energy) + 1)
+#         Fermi = np.zeros_like(energy)
+#         for i in range(L_x):
+#             for j in range(L_y):
+#                 for k in range(3):
+#                     for l in range(3):
+#                         for m in range(4):
+#                             if energy[i, j, k, l, m] <= 0:
+#                                 Fermi[i, j, k, l, m] = 1 / (np.exp(beta*energy[i, j, k, l, m]) + 1)
+#                             else:
+#                                 Fermi[i, j, k, l, m] = np.exp(-beta*energy[i, j, k, l, m]) / (1 + np.exp(-beta*energy[i, j, k, l, m]))
+#         return Fermi
+    
+def Fermi_function_efficiently(energy, beta, T=False):
     if T==False:
         return np.zeros_like(energy)
     else:
-        #return 1 / (np.exp(beta*energy) + 1)
-        Fermi = np.zeros_like(energy)
-        for i in range(L_x):
-            for j in range(L_y):
-                for k in range(3):
-                    for l in range(3):
-                        for m in range(4):
-                            if energy[i, j, k, l, m] <= 0:
-                                Fermi[i, j, k, l, m] = 1 / (np.exp(beta*energy[i, j, k, l, m]) + 1)
-                            else:
-                                Fermi[i, j, k, l, m] = np.exp(-beta*energy[i, j, k, l, m]) / (1 + np.exp(-beta*energy[i, j, k, l, m]))
-        return Fermi
+        if energy <= 0:
+            Fermi = 1 / (np.exp(beta*energy) + 1)
+        else:
+            Fermi = np.exp(-beta*energy) / (1 + np.exp(-beta*energy))
+            return Fermi
     
-def get_superconducting_density(L_x, L_y, w_0, mu, Delta, B_x, B_y, Lambda_R, Lambda_D, h, beta, T):
+# def get_superconducting_density(L_x, L_y, w_0, mu, Delta, B_x, B_y, Lambda_R, Lambda_D, h, beta, T):
+#     k_x_values = 2*np.pi/L_x*np.arange(0, L_x)
+#     k_y_values = 2*np.pi/L_y*np.arange(0, L_y)
+#     phi_x_values = [-h, 0, h]
+#     phi_y_values = [-h, 0, h]
+#     E = GetAnalyticEnergies(k_x_values, k_y_values, phi_x_values, phi_y_values, w_0, mu, Delta, B_x, B_y, Lambda_R, Lambda_D)
+#     # negative_energy = np.where(E<0, E, 0)
+#     positive_energy = np.where(E>0, E, 0)
+#     fundamental_energy = -1/2*np.sum(positive_energy, axis=(0, 1, 4)) + np.sum(positive_energy * Fermi_function(positive_energy, beta, T), axis=(0, 1, 4))
+#     n_s_xx = 1/w_0 * 1/(L_x*L_y) * ( fundamental_energy[2,1] - 2*fundamental_energy[1,1] + fundamental_energy[0,1]) / h**2
+#     n_s_yy = 1/w_0 * 1/(L_x*L_y) * ( fundamental_energy[1,2] - 2*fundamental_energy[1,1] + fundamental_energy[1,0]) / h**2
+#     n_s_xy = 1/w_0 * 1/(L_x*L_y) * ( fundamental_energy[2,2] - fundamental_energy[2,0] - fundamental_energy[0,2] + fundamental_energy[0,0]) / (2*h)**2  #Finite difference of mixed derivatives
+#     n_s_yx = 1/w_0 * 1/(L_x*L_y) * ( fundamental_energy[2,2] - fundamental_energy[0,2] - fundamental_energy[2,0] + fundamental_energy[0,0]) / (2*h)**2
+#     return n_s_xx, n_s_yy, n_s_xy, n_s_yx
+
+def get_superconducting_density_efficiently(L_x, L_y, w_0, mu, Delta, B_x, B_y, Lambda_R, Lambda_D, h, beta, T):
     k_x_values = 2*np.pi/L_x*np.arange(0, L_x)
     k_y_values = 2*np.pi/L_y*np.arange(0, L_y)
     phi_x_values = [-h, 0, h]
     phi_y_values = [-h, 0, h]
-    E = GetAnalyticEnergies(k_x_values, k_y_values, phi_x_values, phi_y_values, w_0, mu, Delta, B_x, B_y, Lambda_R, Lambda_D)
-    negative_energy = np.where(E<0, E, 0)
-    positive_energy = np.where(E>0, E, 0)
-    fundamental_energy = 1/2*np.sum(negative_energy, axis=(0, 1, 4)) + np.sum(positive_energy * Fermi_function(positive_energy, beta, T), axis=(0, 1, 4))
+    fundamental_energy = np.zeros((3, 3))
+    for k, phi_x in enumerate(phi_x_values):
+        for l, phi_y in enumerate(phi_y_values):
+            for i, k_x in enumerate(k_x_values):
+                for j, k_y in enumerate(k_y_values):
+                    positive_energy = GetSumOfPositiveAnalyticEnergy(k_x, k_y, phi_x, phi_y, w_0, mu, Delta, B_x, B_y, Lambda_R, Lambda_D)
+                    fundamental_energy[k, l] += -1/2*positive_energy + positive_energy * Fermi_function_efficiently(positive_energy, beta, T)
     n_s_xx = 1/w_0 * 1/(L_x*L_y) * ( fundamental_energy[2,1] - 2*fundamental_energy[1,1] + fundamental_energy[0,1]) / h**2
     n_s_yy = 1/w_0 * 1/(L_x*L_y) * ( fundamental_energy[1,2] - 2*fundamental_energy[1,1] + fundamental_energy[1,0]) / h**2
     n_s_xy = 1/w_0 * 1/(L_x*L_y) * ( fundamental_energy[2,2] - fundamental_energy[2,0] - fundamental_energy[0,2] + fundamental_energy[0,0]) / (2*h)**2  #Finite difference of mixed derivatives
     n_s_yx = 1/w_0 * 1/(L_x*L_y) * ( fundamental_energy[2,2] - fundamental_energy[0,2] - fundamental_energy[2,0] + fundamental_energy[0,0]) / (2*h)**2
     return n_s_xx, n_s_yy, n_s_xy, n_s_yx
+
 
 def get_Green_function(omega, k_x_values, k_y_values, w_0, mu, Delta, B_x, B_y, Lambda):
     G = np.zeros((len(k_x_values), len(k_y_values),
@@ -116,7 +145,8 @@ def integrate(B):
     B_y = B * ( g_yx * np.cos(theta) + g_yy * np.sin(theta) )
     # B_x = B * np.cos(theta)
     # B_y = B * np.sin(theta)
-    n[0], n[1], n[2], n[3] = get_superconducting_density(L_x, L_y, w_0, mu, Delta, B_x, B_y, Lambda_R, Lambda_D, h, beta, T)
+    # n[0], n[1], n[2], n[3] = get_superconducting_density(L_x, L_y, w_0, mu, Delta, B_x, B_y, Lambda_R, Lambda_D, h, beta, T)
+    n[0], n[1], n[2], n[3] = get_superconducting_density_efficiently(L_x, L_y, w_0, mu, Delta, B_x, B_y, Lambda_R, Lambda_D, h, beta, T)
     return n
 
 L_x = 2500   #2500
@@ -129,10 +159,10 @@ theta = np.pi/2   #np.pi/2
 a = 3.08e-07 * np.sqrt(1)#3.08e-07 # cm
 n = 8.5e11 # 1/cm**2
 k_F = np.sqrt(2*np.pi*n) # 1/cm
-beta = 200
-T = False
+beta = 1000
+T = True
 mu_B = 5.79e-2 # meV/T
-Lambda_R = 29.87#5*Delta/(k_F*a)   #7.5e-7 / a    #0.56#5*Delta/np.sqrt((4*w_0 + mu)/w_0)/2
+Lambda_R = 0.56#29.87#5*Delta/(k_F*a)   #7.5e-7 / a    #0.56#5*Delta/np.sqrt((4*w_0 + mu)/w_0)/2
 Lambda_D = 0
 h = 1e-3 #1e-2
 k_x_values = 2*np.pi/L_x*np.arange(0, L_x)
@@ -155,7 +185,7 @@ params = {"L_x": L_x, "L_y": L_y, "w_0": w_0,
 
 if __name__ == "__main__":
     # B_values = np.linspace(0, 6*Delta, points)
-    B_values = np.append(np.linspace(0, 3*Delta, 2*points//3), np.linspace(3*Delta, 6*Delta, points//3))  #meV
+    B_values = np.append(np.linspace(0, 5*Delta, 2*points//3), np.linspace(5*Delta, 10*Delta, points//3))  #meV
     with multiprocessing.Pool(n_cores) as pool:
         results_pooled = pool.map(integrate, B_values)
     n_B_y = np.array(results_pooled)

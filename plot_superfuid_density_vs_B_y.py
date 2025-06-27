@@ -17,7 +17,7 @@ os.chdir(dname)
 
 data_folder = Path("Data/")
 # file_to_open = data_folder / "n_By_mu_-34.900000000000006_L=1500_h=0.001_B_y_in_(0.0-0.48)_Delta=0.08_lambda_R=0.56_lambda_D=0_g_xx=1.5_g_xy=0_g_yy=1_g_yx=0_theta=0_points=16_beta=False_T=False.npz"
-file_to_open = data_folder / "n_By_mu_-34.900000000000006_L=1500_h=0.001_B_y_in_(0.0-0.8)_Delta=0.08_lambda_R=0.56_lambda_D=0.19_g_xx=1_g_xy=0_g_yy=1_g_yx=0_theta=1.57_points=24_beta=False_T=False.npz"
+file_to_open = data_folder / "n_By_mu_-349.0_L=200_h=0.001_B_y_in_(0.0-2.0)_Delta=0.2_lambda_R=0.56_lambda_D=0_g_xx=1_g_xy=0_g_yy=1_g_yx=0_theta=1.57_points=24_beta=1000_T=True.npz"
 
 Data = np.load(file_to_open)
 
