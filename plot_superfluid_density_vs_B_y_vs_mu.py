@@ -15,7 +15,9 @@ abspath = os.path.abspath(__file__)
 dname = os.path.dirname(abspath)
 os.chdir(dname)
 
-data_folder = Path("Data/")
+# data_folder = Path("Data/")
+data_folder = Path(r"C:\Users\Gabriel\OneDrive - Universidad Nacional de San Martin\Doctorado-DESKTOP-JBOMLCA\Archivos\Data_19_06_25\Data")
+
 file_to_open = data_folder / "n_By_mu_-39_L=1000_h=0.01_B_y_in_(0.0-1.2)_Delta=0.2_lambda=0.56.npz"
 Data = np.load(file_to_open)
 
@@ -202,7 +204,7 @@ g_yx10 = Data10["g_yx"]
 
 
 fig, ax = plt.subplots()
-# ax.plot(B_values/Delta, n_B_y[:,0], "-o",  label=r"$n_{s,xx}$")
+# ax.plot(B_values/Delta, n_B_y[:,1]/n_B_y[0,1], "-o",  label=r"$n_{s,yy}(\theta=\pi/2,\mu=$"+f"{mu})")
 ax.plot(B_values/Delta, n_B_y[:,0]/n_B_y[0,0], "-o",  label=r"$n_{s}/n_s(0)(\theta=\pi/2,\mu=$"+f"{mu})")
 # ax.plot(B_values/Delta, n_B_y[:,2], "-o",  label=r"$n_{s,xy}$")
 # ax.plot(B_values/Delta, n_B_y[:,3], "-o",  label=r"$n_{s,yx}$")
@@ -219,6 +221,8 @@ ax.plot(B_values4/Delta4, n_B_y4[:,0]/n_B_y4[0,0], "-D",  label=r"$n_{s}/n_s(0)(
 ax.plot(B_values5/Delta5, n_B_y5[:,0]/n_B_y5[0,0], "-p",  label=r"$n_{s}/n_s(0)(\theta=\pi/2,\mu=$"+f"{mu5})")
 ax.plot(B_values6/Delta6, n_B_y6[:,0]/n_B_y6[0,0], "-^",  label=r"$n_{s}/n_s(0)(\theta=\pi/2,\mu=$"+f"{mu6})")
 ax.plot(B_values7/Delta7, n_B_y7[:,0]/n_B_y7[0,0], "-d",  label=r"$n_{s}/n_s(0)(\theta=\pi/2,\mu=$"+f"{mu7})")
+# ax.plot(B_values7/Delta7, n_B_y7[:,1]/n_B_y7[0,1], "-o",  label=r"$n_{s,yy}(\theta=\pi/2,\mu=$"+f"{mu7})")
+
 ax.plot(B_values8/Delta8, n_B_y8[:,0]/n_B_y8[0,0], "-d",  label=r"$n_{s}/n_s(0)(\theta=\pi/2,\mu=$"+f"{mu8})")
 ax.plot(B_values9/Delta9, n_B_y9[:,0]/n_B_y9[0,0], "-.",  label=r"$n_{s}/n_s(0)(\theta=\pi/2,\mu=$"+f"{mu9})")
 ax.plot(B_values10/Delta10, n_B_y10[:,0]/n_B_y10[0,0], "-.",  label=r"$n_{s}/n_s(0)(\theta=\pi/2,\mu=$"+f"{mu10})")

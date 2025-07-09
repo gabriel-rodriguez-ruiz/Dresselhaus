@@ -10,11 +10,17 @@ import matplotlib.pyplot as plt
 from pathlib import Path
 import numpy as np
 
+# data_folder = Path(r"C:\Users\Gabriel\OneDrive - Universidad Nacional de San Martin\Doctorado-DESKTOP-JBOMLCA\Archivos\Data_19_06_25\Data")
+# file_to_open = data_folder / "n_theta_mu_-349.0_L=2500_h=0.001_theta_in_(0.0-1.571)B=0.29_Delta=0.2_lambda_R=1.5454059201910981_lambda_D=0_g_xx=1_g_xy=0_g_yy=1_g_yx=0_points=16.npz"
+# data_folder = Path("Data/")
+# file_to_open = data_folder / "n_theta_mu_-34.900000000000006_L=2500_h=0.001_theta_in_(0.0-1.571)B=0.1_Delta=0.08_lambda_R=0.56_lambda_D=0_g_xx=1_g_xy=0_g_yy=1_g_yx=0_points=16.npz"
 data_folder = Path("Data/")
-file_to_open = data_folder / "n_theta_mu_-349.0_L=2500_h=0.001_theta_in_(0.0-1.571)B=0.29_Delta=0.2_lambda_R=1.5454059201910981_lambda_D=0_g_xx=1_g_xy=0_g_yy=1_g_yx=0_points=16.npz"
+file_to_open = data_folder / "n_theta_mu_-34.900000000000006_L=2500_h=0.001_theta_in_(0.0-1.571)B=0.16_Delta=0.08_lambda_R=0.56_lambda_D=0_g_xx=1_g_xy=0_g_yy=1_g_yx=0_points=16.npz"
+
 Data = np.load(file_to_open, allow_pickle=True)
 
-n_theta = Data["n_theta"]
+n_theta = (Data["n_theta"] - Data["n_theta"][0])
+
 n_theta_0_90 = np.append(
         np.append(
             np.append(
@@ -51,11 +57,18 @@ g_yx = Data["g_yx"]
 # fig, ax = plt.subplots(subplot_kw={'projection': 'polar'})
 fig, ax = plt.subplots()
 
-# ax.plot(theta_values, n_theta_0_90[:,0], "-o",  label=r"$n_{s,xx}$")
+# ax.plot(Data["theta_values"], n_theta[:,0], "-o",  label=r"$n_{s,xx}$", markersize=10)
+# ax.plot(Data["theta_values"], n_theta[:,1], "-o",  label=r"$n_{s,yy}$", markersize=10)
+
+ax.plot(theta_values, n_theta_0_90[:,0], "-o",  label=r"$n_{s,xx}$", color="mediumseagreen")
 ax.plot(theta_values, n_theta_0_90[:,1], "-o",  label=r"$n_{s,yy}$")
-# ax.plot(theta_values, n_theta_45[:,2], "-o",  label=r"$n_{s,xy}$")
+# ax.plot(theta_values, 1/2*(n_theta_45[:,0]+n_theta_45[:,1]+n_theta_45[:,2]+n_theta_45[:,3]),
+#         "-o",  label=r"$n_{s,x'x'}$", color="yellowgreen")
+ax.plot(theta_values, 1/2*(n_theta_45[:,0]+n_theta_45[:,1]+n_theta_45[:,2]+n_theta_45[:,3]),
+        "-o",  label=r"$n_{s,x'x'}$", color="yellowgreen")
+# ax.plot(theta_values, 1/2*(n_theta_0_90[:,0]+n_theta_0_90[:,1]+n_theta_0_90[:,2]+n_theta_0_90[:,3]), "-o",  label=r"$n_{s,x'x'}$", color="red")
+
 # ax.plot(theta_values, n_theta_45[:,3], "-o",  label=r"$n_{s,yx}$")
-# ax.plot(theta_values, (n_theta[:,0]+n_theta[:,1]+n_theta[:,2]+n_theta[:,3])/2, "-o",  label=r"$n_{s,xx}+n_{s,yx}+n_{s,xy}n_{s,yy}$")
 
 ax.set_title(r"$\lambda_R=$" + f"{Lambda_R:.2}"
              +r"; $\Delta=$" + f"{Delta}"

@@ -102,11 +102,18 @@ def Fermi_function_efficiently(energy, beta, T=False):
 #     n_s_yx = 1/w_0 * 1/(L_x*L_y) * ( fundamental_energy[2,2] - fundamental_energy[0,2] - fundamental_energy[2,0] + fundamental_energy[0,0]) / (2*h)**2
 #     return n_s_xx, n_s_yy, n_s_xy, n_s_yx
 
-def get_superconducting_density_efficiently(L_x, L_y, w_0, mu, Delta, B_x, B_y, Lambda_R, Lambda_D, h, beta, T):
-    k_x_values = 2*np.pi/L_x*np.arange(0, L_x)
-    k_y_values = 2*np.pi/L_y*np.arange(0, L_y)
-    phi_x_values = [-h, 0, h]
-    phi_y_values = [-h, 0, h]
+def get_superconducting_density_efficiently(L_x, L_y, w_0, mu, Delta, B_x, B_y, Lambda_R, Lambda_D, h, beta, T, chi):
+    #k_x_values = 2*np.pi/L_x*np.arange(0, L_x)
+    #k_y_values = 2*np.pi/L_y*np.arange(0, L_y)
+    #phi_x_values = [-h, 0, h]
+    #phi_y_values = [-h, 0, h]
+    k_x = 2*np.pi/L_x*np.arange(0, L_x)
+    k_y = 2*np.pi/L_y*np.arange(0, L_y)
+    k_x_values = np.cos(chi) * k_x - np.sin(chi) * k_y
+    k_y_values = np.sin(chi) * k_x + np.cos(chi) * k_y
+    phi = np.array([-h, 0, h])
+    phi_x_values = np.cos(chi) * phi - np.sin(chi) * phi
+    phi_y_values = np.sin(chi) * phi + np.cos(chi) * phi
     fundamental_energy = np.zeros((3, 3))
     for k, phi_x in enumerate(phi_x_values):
         for l, phi_y in enumerate(phi_y_values):
@@ -146,16 +153,16 @@ def integrate(B):
     # B_x = B * np.cos(theta)
     # B_y = B * np.sin(theta)
     # n[0], n[1], n[2], n[3] = get_superconducting_density(L_x, L_y, w_0, mu, Delta, B_x, B_y, Lambda_R, Lambda_D, h, beta, T)
-    n[0], n[1], n[2], n[3] = get_superconducting_density_efficiently(L_x, L_y, w_0, mu, Delta, B_x, B_y, Lambda_R, Lambda_D, h, beta, T)
+    n[0], n[1], n[2], n[3] = get_superconducting_density_efficiently(L_x, L_y, w_0, mu, Delta, B_x, B_y, Lambda_R, Lambda_D, h, beta, T, chi)
     return n
 
-L_x = 2500   #2500
-L_y = 2500   #2500
+L_x = 3000  #2500
+L_y = 3000  #2500
 w_0 = 100#100 # meV
-Delta = 0.2 # meV  0.2 ###############Normal state
-mu = -3.49*w_0  #-3.49*w_0 	#2*(20*Delta-2*w_0)
+Delta = 0.08 # meV  0.2 ###############Normal state
+mu = -3.49*w_0 #-3.49*w_0 	#2*(20*Delta-2*w_0)
 
-theta = np.pi/2   #np.pi/2
+theta = np.pi/4   #np.pi/2
 a = 3.08e-07 * np.sqrt(1)#3.08e-07 # cm
 n = 8.5e11 # 1/cm**2
 k_F = np.sqrt(2*np.pi*n) # 1/cm
@@ -171,6 +178,7 @@ g_xx = 1
 g_xy = 0
 g_yy = 1
 g_yx = 0
+chi = 0
 n_cores = 8
 points = 3*n_cores
 params = {"L_x": L_x, "L_y": L_y, "w_0": w_0,
@@ -184,15 +192,15 @@ params = {"L_x": L_x, "L_y": L_y, "w_0": w_0,
 
 
 if __name__ == "__main__":
-    # B_values = np.linspace(0, 6*Delta, points)
-    B_values = np.append(np.linspace(0, 5*Delta, 2*points//3), np.linspace(5*Delta, 10*Delta, points//3))  #meV
+    B_values = np.linspace(0, 6*Delta, points)
+    # B_values = np.append(np.linspace(0, 5*Delta, 2*points//3), np.linspace(5*Delta, 10*Delta, points//3))  #meV
     with multiprocessing.Pool(n_cores) as pool:
         results_pooled = pool.map(integrate, B_values)
     n_B_y = np.array(results_pooled)
     
     data_folder = Path("Data/")
     
-    name = f"n_By_mu_{mu}_L={L_x}_h={h}_B_y_in_({np.min(B_values)}-{np.round(np.max(B_values),3)})_Delta={Delta}_lambda_R={np.round(Lambda_R, 2)}_lambda_D={Lambda_D}_g_xx={g_xx}_g_xy={g_xy}_g_yy={g_yy}_g_yx={g_yx}_theta={np.round(theta,2)}_points={points}_beta={beta}_T={T}.npz"
+    name = f"n_By_mu_{mu}_L={L_x}_h={h}_B_y_in_({np.min(B_values)}-{np.round(np.max(B_values),3)})_Delta={Delta}_lambda_R={np.round(Lambda_R, 2)}_lambda_D={Lambda_D}_g_xx={g_xx}_g_xy={g_xy}_g_yy={g_yy}_g_yx={g_yx}_theta={np.round(theta,2)}_points={points}_beta={beta}_T={T}_chi={np.round(chi,2)}.npz"
     file_to_open = data_folder / name
     np.savez(file_to_open , n_B_y=n_B_y, B_values=B_values,
              **params)
