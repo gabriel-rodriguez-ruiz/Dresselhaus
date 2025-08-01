@@ -158,18 +158,18 @@ def integrate(B):
 
 L_x = 3000  #2500
 L_y = 3000  #2500
-w_0 = 100#100 # meV
+w_0 = 10#100 # meV
 Delta = 0.08 # meV  0.2 ###############Normal state
 mu = -3.49*w_0 #-3.49*w_0 	#2*(20*Delta-2*w_0)
 
-theta = np.pi/4   #np.pi/2
+theta = np.pi/2   #np.pi/2
 a = 3.08e-07 * np.sqrt(1)#3.08e-07 # cm
 n = 8.5e11 # 1/cm**2
 k_F = np.sqrt(2*np.pi*n) # 1/cm
 beta = 1000
-T = True
+T = False
 mu_B = 5.79e-2 # meV/T
-Lambda_R = 0.56#29.87#5*Delta/(k_F*a)   #7.5e-7 / a    #0.56#5*Delta/np.sqrt((4*w_0 + mu)/w_0)/2
+Lambda_R = 0#0.056#0.56#29.87#5*Delta/(k_F*a)   #7.5e-7 / a    #0.56#5*Delta/np.sqrt((4*w_0 + mu)/w_0)/2
 Lambda_D = 0
 h = 1e-3 #1e-2
 k_x_values = 2*np.pi/L_x*np.arange(0, L_x)
@@ -179,7 +179,7 @@ g_xy = 0
 g_yy = 1
 g_yx = 0
 chi = 0
-n_cores = 8
+n_cores = 16
 points = 3*n_cores
 params = {"L_x": L_x, "L_y": L_y, "w_0": w_0,
           "mu": mu, "Delta": Delta, "theta": theta,
@@ -192,7 +192,7 @@ params = {"L_x": L_x, "L_y": L_y, "w_0": w_0,
 
 
 if __name__ == "__main__":
-    B_values = np.linspace(0, 6*Delta, points)
+    B_values = np.linspace(0.8*Delta, 1.3*Delta, points)
     # B_values = np.append(np.linspace(0, 5*Delta, 2*points//3), np.linspace(5*Delta, 10*Delta, points//3))  #meV
     with multiprocessing.Pool(n_cores) as pool:
         results_pooled = pool.map(integrate, B_values)

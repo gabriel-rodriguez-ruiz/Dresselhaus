@@ -16,7 +16,7 @@ dname = os.path.dirname(abspath)
 os.chdir(dname)
 
 # data_folder = Path("Data/")
-data_folder = Path(r"C:\Users\Gabriel\OneDrive - Universidad Nacional de San Martin\Doctorado-DESKTOP-JBOMLCA\Archivos\Data_19_06_25\Data")
+data_folder = Path(r"/home/gabriel/OneDrive/Doctorado-DESKTOP-JBOMLCA/Archivos/Data_19_06_25/Data")
 
 file_to_open = data_folder / "n_By_mu_-39_L=1000_h=0.01_B_y_in_(0.0-1.2)_Delta=0.2_lambda=0.56.npz"
 Data = np.load(file_to_open)
@@ -247,6 +247,50 @@ ax.legend()
 # plt.tight_layout()
 plt.show()
 
+
+fig, ax = plt.subplots()
+# ax.plot(B_values/Delta, n_B_y[:,1]/n_B_y[0,1], "-o",  label=r"$n_{s,yy}(\theta=\pi/2,\mu=$"+f"{mu})")
+ax.plot(B_values/Delta, n_B_y[:,1]/n_B_y[0,1], "-o",  label=r"$n_{s}/n_s(0)(\theta=\pi/2,\mu=$"+f"{mu})")
+# ax.plot(B_values/Delta, n_B_y[:,2], "-o",  label=r"$n_{s,xy}$")
+# ax.plot(B_values/Delta, n_B_y[:,3], "-o",  label=r"$n_{s,yx}$")
+# ax.plot(B_values/Delta, (n_B_y[:,0]+n_B_y[:,1]+n_B_y[:,2]+n_B_y[:,3])/2, "-o",  label=r"$n_{s,xx}+n_{s,yy}+n_{s,xy}+n_{s,yx}$")
+
+# ax.plot(B_values/Delta, n_B_y[:,0], "-o",  label=r"$n_{s,xx}$")
+ax.plot(B_values2/Delta2, n_B_y2[:,1]/n_B_y2[0,1], "-s",  label=r"$n_{s}/n_s(0)(\theta=\pi/2,\mu=$"+f"{mu2})")
+# ax.plot(B_values/Delta, n_B_y[:,2], "-o",  label=r"$n_{s,xy}$")
+# ax.plot(B_values/Delta, n_B_y[:,3], "-o",  label=r"$n_{s,yx}$")
+# ax.plot(B_values/Delta, (n_B_y[:,0]+n_B_y[:,1]+n_B_y[:,2]+n_B_y[:,3])/2, "-o",  label=r"$n_{s,xx}+n_{s,yy}+n_{s,xy}+n_{s,yx}$")
+
+ax.plot(B_values3/Delta3, n_B_y3[:,1]/n_B_y3[0,1], "-v",  label=r"$n_{s}/n_s(0)(\theta=\pi/2,\mu=$"+f"{mu3})")
+ax.plot(B_values4/Delta4, n_B_y4[:,1]/n_B_y4[0,1], "-D",  label=r"$n_{s}/n_s(0)(\theta=\pi/2,\mu=$"+f"{mu4})")
+ax.plot(B_values5/Delta5, n_B_y5[:,1]/n_B_y5[0,1], "-p",  label=r"$n_{s}/n_s(0)(\theta=\pi/2,\mu=$"+f"{mu5})")
+ax.plot(B_values6/Delta6, n_B_y6[:,1]/n_B_y6[0,1], "-^",  label=r"$n_{s}/n_s(0)(\theta=\pi/2,\mu=$"+f"{mu6})")
+ax.plot(B_values7/Delta7, n_B_y7[:,1]/n_B_y7[0,1], "-d",  label=r"$n_{s}/n_s(0)(\theta=\pi/2,\mu=$"+f"{mu7})")
+# ax.plot(B_values7/Delta7, n_B_y7[:,1]/n_B_y7[0,1], "-o",  label=r"$n_{s,yy}(\theta=\pi/2,\mu=$"+f"{mu7})")
+
+ax.plot(B_values8/Delta8, n_B_y8[:,1]/n_B_y8[0,1], "-d",  label=r"$n_{s}/n_s(0)(\theta=\pi/2,\mu=$"+f"{mu8})")
+ax.plot(B_values9/Delta9, n_B_y9[:,1]/n_B_y9[0,1], "-.",  label=r"$n_{s}/n_s(0)(\theta=\pi/2,\mu=$"+f"{mu9})")
+ax.plot(B_values10/Delta10, n_B_y10[:,1]/n_B_y10[0,1], "-.",  label=r"$n_{s}/n_s(0)(\theta=\pi/2,\mu=$"+f"{mu10})")
+
+# ax.set_title(r"$\lambda_R=$" + f"{np.round(Lambda_R,2)}"
+#              +r"; $\Delta=$" + f"{Delta}"
+#              +r"; $\theta=$" + f"{np.round(theta,2)}"
+#              + r"; $\mu$"+f"={mu}"
+#              +r"; $w_0$"+f"={w_0}"
+#              +r"; $L_x=$"+f"{L_x}"
+#              +f"; h={h}" + "\n"
+#              + r"$\lambda_D=$" + f"{Lambda_D}"
+#              + r"; $g_{xx}=$" + f"{g_xx}"
+#              + r"; $g_{yy}=$" + f"{g_yy}"
+#              + r"; $g_{xy}=$" + f"{g_xy}"
+#              + r"$; g_{yx}=$" + f"{g_yx}")
+
+ax.set_xlabel(r"$\frac{\mu_BgB}{\Delta}$")
+ax.set_ylabel(r"$n_s$")
+ax.legend()
+
+# plt.tight_layout()
+plt.show()
 #%% Save figure
 saving_folder = Path("/home/gabriel/Dropbox/Figures/Fitting to superfluid density")
 file_name = f'theoretical_ns_for_various_mu_lambda={np.round(Lambda,2)}_Delta={Delta}_' \

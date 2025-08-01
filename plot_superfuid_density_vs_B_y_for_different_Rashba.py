@@ -48,6 +48,10 @@ ax.plot(B_values/Delta, n_B_y[:,1],
                              "-o",  label=r"$n_{s,x'x'}(\varphi=0, 4.9GHz,$"+r"$\lambda_R=$"+f"{Lambda_R})",
                              color="black",
                              markersize=10)
+ax.plot(B_values/Delta, n_B_y[:,0],
+                             "-o",  label=r"$n_{s,x'x'}(\varphi=0, 4.9GHz,$"+r"$\lambda_R=$"+f"{Lambda_R})",
+                             color="black",
+                             markersize=10)
 ax.plot(B_values/Delta, 1/2*(n_B_y[:,0] + n_B_y[:,1] + n_B_y[:,2] + n_B_y[:,3]),
                              "-*",  label=r"$n_{s,x'x'}(\varphi=0, 5.7GHz$"+r"$\lambda_R=$"+f"{Lambda_R})",
                              color="black",
@@ -63,6 +67,10 @@ B_values = Data["B_values"]
 Lambda_R = Data["Lambda_R"]
 
 ax.plot(B_values/Delta, n_B_y[:,1],
+                             "--o",  label=r"$n_{s,x'x'}(\varphi=0, 4.9GHz$"+r"$\lambda_R=$"+f"{Lambda_R})",
+                             color="red",
+                             markersize=10)
+ax.plot(B_values/Delta, n_B_y[:,0],
                              "--o",  label=r"$n_{s,x'x'}(\varphi=0, 4.9GHz$"+r"$\lambda_R=$"+f"{Lambda_R})",
                              color="red",
                              markersize=10)

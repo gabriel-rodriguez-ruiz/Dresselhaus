@@ -15,11 +15,14 @@ abspath = os.path.abspath(__file__)
 dname = os.path.dirname(abspath)
 os.chdir(dname)
 
-# data_folder = Path(r"C:\Users\Gabriel\OneDrive - Universidad Nacional de San Martin\Doctorado-DESKTOP-JBOMLCA\Archivos\Data_19_06_25\Data")
+# data_folder = Path(r"/home/gabriel/OneDrive/Doctorado-DESKTOP-JBOMLCA/Archivos/Data_19_06_25/Data")
 data_folder = Path("./Data")
 # file_to_open = data_folder / "n_By_mu_-34.900000000000006_L=2500_h=0.001_B_y_in_(0.0-0.8)_Delta=0.08_lambda_R=0.56_lambda_D=0_g_xx=1_g_xy=0_g_yy=1_g_yx=0_theta=1.57_points=24_beta=1000_T=False_chi=0.79.npz"
 # file_to_open = data_folder / "n_By_mu_-34.900000000000006_L=1500_h=0.001_B_y_in_(0.0-0.8)_Delta=0.08_lambda_R=0.56_lambda_D=0.19_g_xx=1_g_xy=0_g_yy=1_g_yx=0_theta=1.57_points=24_beta=False_T=False.npz"
-file_to_open = data_folder / "n_By_mu_-349.0_L=3000_h=0.001_B_y_in_(0.0-0.48)_Delta=0.08_lambda_R=0.56_lambda_D=0_g_xx=1_g_xy=0_g_yy=1_g_yx=0_theta=0.79_points=24_beta=1000_T=True_chi=0.npz"
+# file_to_open = data_folder / "n_By_mu_-349.0_L=3000_h=0.001_B_y_in_(0.0-0.96)_Delta=0.08_lambda_R=10_lambda_D=0_g_xx=1_g_xy=0_g_yy=1_g_yx=0_theta=0.79_points=24_beta=1000_T=True_chi=0.npz"
+file_to_open = data_folder / "n_By_mu_-34.900000000000006_L=3000_h=0.001_B_y_in_(0.064-0.104)_Delta=0.08_lambda_R=0.06_lambda_D=0_g_xx=1_g_xy=0_g_yy=1_g_yx=0_theta=1.57_points=48_beta=1000_T=False_chi=0.npz"
+# file_to_open = data_folder / "n_By_mu_-34.900000000000006_L=1000_h=0.01_B_y_in_(0.0-0.96)_Delta=0.08_lambda_R=29.87_lambda_D=0_g_xx=1_g_xy=0_g_yy=1_g_yx=0_theta=0.79_points=16_beta=1000_T=True_chi=0.npz"
+
 
 Data = np.load(file_to_open)
 
@@ -38,17 +41,19 @@ g_yy = Data["g_yy"]
 g_xy = Data["g_xy"]
 g_yx = Data["g_yx"]
 beta = Data["beta"]
+T = Data["T"]
 
 Delta_Z_x = B_values * (g_xx*np.cos(theta))
-
+ 
 # phi = np.arctan(g_yy/g_xx)
 
 fig, ax = plt.subplots()
-ax.plot(B_values/Delta, n_B_y[:,0], "-*g",  label=r"$n_{s,xx}(\theta=\pi/4, 5.7GHz)$")
-# ax.plot(B_values/Delta, n_B_y[:,1], "-*r",  label=r"$n_{s,yy}$")
-# ax.plot(B_values/Delta, n_B_y[:,2], "-o",  label=r"$n_{s,xy}$")
+ax.plot(B_values/Delta, n_B_y[:,0], "-*g",  label=r"$n_{s,xx}(\theta=$"+f"{np.round(theta,2)}, 5.7GHz, L=3000)")
+ax.plot(B_values/Delta, n_B_y[:,1], "-sg",  label=r"$n_{s,yy}(\theta=$"+f"{np.round(theta,2)}, \lambda_R=0.056)")
+# ax.plot(B_values/Delta, n_B_y[:,2], "-o",  label=r"$n_{s,xy}(\theta=$"+f"{np.round(theta,2)}, 5.7GHz)")
 # ax.plot(B_values/Delta, n_B_y[:,3], "-o",  label=r"$n_{s,yx}$")
-ax.plot(B_values/Delta, 1/2*(n_B_y[:,0] + n_B_y[:,1] + n_B_y[:,2] + n_B_y[:,3]), "-og",  label=r"$n_{s,x'x'}(\theta=\pi/4,4.9GHz)$")
+# ax.plot(B_values/Delta, 1/2*(n_B_y[:,0] + n_B_y[:,1] + n_B_y[:,2] + n_B_y[:,3]), "-og",  label=r"$n_{s,x'x'}(\theta=\pi/4,4.9GHz)$")
+# ax.plot(B_values/Delta, 1/2*(n_B_y[:,0] + n_B_y[:,1] - n_B_y[:,2] - n_B_y[:,3]), "-oc",  label=r"$n_{s,y'y'}(\theta=\pi/4,4.9GHz)$")
 
 # ax.plot(B_values/Delta, n_B_y[:,1],
 #                              "-o",  label=r"$n_{s,x'x'}(\varphi=\pi/2, 4.9GHz)$",
@@ -64,27 +69,31 @@ phi = np.arctan(-np.pi/2)
 #                              color="black",
 #                              markersize=10)
     
-data_folder = Path(r"C:\Users\Gabriel\OneDrive - Universidad Nacional de San Martin\Doctorado-DESKTOP-JBOMLCA\Archivos\Data_19_06_25\Data")
-file_to_open = data_folder / "n_By_mu_-349.0_L=3000_h=0.001_B_y_in_(0.0-0.48)_Delta=0.08_lambda_R=0.56_lambda_D=0_g_xx=1_g_xy=0_g_yy=1_g_yx=0_theta=1.57_points=16_beta=1000_T=True.npz"
+# data_folder = Path(r"/home/gabriel/OneDrive/Doctorado-DESKTOP-JBOMLCA/Archivos/Data_19_06_25/Data")
+data_folder = Path("./Data")
+file_to_open = data_folder / "n_By_mu_-34.900000000000006_L=3000_h=0.001_B_y_in_(0.064-0.104)_Delta=0.08_lambda_R=0_lambda_D=0_g_xx=1_g_xy=0_g_yy=1_g_yx=0_theta=1.57_points=48_beta=1000_T=False_chi=0.npz"
+# file_to_open = data_folder / "n_By_mu_-349.0_L=2500_h=0.001_B_y_in_(0.0-0.48)_Delta=0.08_lambda_R=0.56_lambda_D=0_g_xx=1_g_xy=0_g_yy=1_g_yx=0_theta=1.57_points=24_beta=1000_T=True.npz"
+
 Data = np.load(file_to_open)
 n_B_y = Data["n_B_y"]
 B_values = Data["B_values"]
 
+ax.plot(B_values/Delta, n_B_y[:,1],
+        "-*k",  label=r"$n_{s,xx}(\theta=\pi/2,\lambda_R=0, L=3000)$")
+# ax.plot(B_values/Delta, n_B_y[:,2], "-o",  label=r"$n_{s,xy}(\theta=\pi/2, 5.7GHz)$")
 ax.plot(B_values/Delta, n_B_y[:,0],
-        "-*k",  label=r"$n_{s,xx}(\theta=\pi/2,5.7GHz)$")
-# ax.plot(B_values/Delta, n_B_y[:,1],
-#         "-*k",  label=r"$n_{s,yy}(\theta=\pi/2,5.7GHz)$")
-ax.plot(B_values/Delta, 1/2*(n_B_y[:,0] + n_B_y[:,1] + n_B_y[:,2] + n_B_y[:,3]),
-                             "-ok",
-                             label=r"$n_{s,x'x'}(\theta=\pi/2,4.9GHz)$")
+        "-*r",  label=r"$n_{s,yy}(\theta=\pi/2,5.7GHz)$")
+# ax.plot(B_values/Delta, 1/2*(n_B_y[:,0] + n_B_y[:,1] + n_B_y[:,2] + n_B_y[:,3]),
+#                              "-ok",
+#                              label=r"$n_{s,x'x'}(\theta=\pi/2,4.9GHz)$")
 
-# file_to_open = data_folder / "n_By_mu_-34.900000000000006_L=1500_h=0.001_B_y_in_(0.0-0.8)_Delta=0.08_lambda_R=0.56_lambda_D=0.19_g_xx=1_g_xy=0_g_yy=1_g_yx=0_theta=0_points=24_beta=False_T=False.npz"
+# file_to_open = data_folder / "n_By_mu_-34.900000000000006_L=2500_h=0.001_B_y_in_(0.064-0.104)_Delta=0.08_lambda_R=0.06_lambda_D=0_g_xx=1_g_xy=0_g_yy=1_g_yx=0_theta=1.57_points=48_beta=1000_T=False_chi=0.npz"
 # Data = np.load(file_to_open)
 # n_B_y = Data["n_B_y"]   
 # B_values = Data["B_values"]
 
-# ax.plot(B_values/Delta, n_B_y[:,1],
-#         "-o",  label=r"$n_{s,x'x'}(\varphi=0, 4.9GHz)$", color="red")
+# ax.plot(B_values/Delta, n_B_y[:,0],
+#         "-o",  label=r"$n_{s,x'x'}(\varphi=1.57, 4.9GHz,L=2500)$", color="red")
 # ax.plot(B_values/Delta, 1/2*(n_B_y[:,0] + n_B_y[:,1] + n_B_y[:,2] + n_B_y[:,3]),
 #                              "-*",  label=r"$n_{s,x'x'}(\varphi=0, 5.7GHz)$", color="red")
 # ax.plot(B_values/Delta, np.cos(phi)**2*n_B_y[:,0] + np.sin(phi)**2*n_B_y[:,1] + np.sin(phi)*np.cos(phi)*(n_B_y[:,2] + n_B_y[:,3]),
@@ -92,14 +101,14 @@ ax.plot(B_values/Delta, 1/2*(n_B_y[:,0] + n_B_y[:,1] + n_B_y[:,2] + n_B_y[:,3]),
 #                              color="red",
 #                              markersize=10)
 # file_to_open = data_folder / "n_By_mu_-34.900000000000006_L=1500_h=0.001_B_y_in_(0.0-0.8)_Delta=0.08_lambda_R=0.56_lambda_D=0.19_g_xx=1_g_xy=0_g_yy=1_g_yx=0_theta=0.79_points=24_beta=False_T=False.npz"
-# file_to_open = data_folder / "n_By_mu_-34.900000000000006_L=2000_h=0.001_B_y_in_(0.0-0.8)_Delta=0.08_lambda_R=0.56_lambda_D=0.19_g_xx=1_g_xy=0_g_yy=1_g_yx=0_theta=0.79_points=24_beta=False_T=False.npz"
+# file_to_open = data_folder / "n_By_mu_-34.900000000000006_L=1000_h=0.001_B_y_in_(0.064-0.104)_Delta=0.08_lambda_R=0.06_lambda_D=0_g_xx=1_g_xy=0_g_yy=1_g_yx=0_theta=1.57_points=48_beta=1000_T=False_chi=0.npz"
 
 # Data = np.load(file_to_open)
 # n_B_y = Data["n_B_y"]
 # B_values = Data["B_values"]
 
-# ax.plot(B_values/Delta, n_B_y[:,1],
-#         "-o",  label=r"$n_{s,x'x'}(\varphi=\pi/4, 4.9GHz)$", color="green")
+# ax.plot(B_values/Delta, n_B_y[:,0],
+#         "-o",  label=r"$n_{s,x'x'}(\varphi=\pi/2, 5.7GHz, L=1000)$", color="green")
 # ax.plot(B_values/Delta, 1/2*(n_B_y[:,0] + n_B_y[:,1] + n_B_y[:,2] + n_B_y[:,3]),
 #                              "-*",  label=r"$n_{s,x'x'}(\varphi=\pi/4, 5.7GHz)$", color="green")
 # ax.plot(B_values/Delta, np.cos(phi)**2*n_B_y[:,0] + np.sin(phi)**2*n_B_y[:,1] + np.sin(phi)*np.cos(phi)*(n_B_y[:,2] + n_B_y[:,3]),
@@ -138,7 +147,7 @@ ax.plot(B_values/Delta, 1/2*(n_B_y[:,0] + n_B_y[:,1] + n_B_y[:,2] + n_B_y[:,3]),
 # ax.plot(B_values/Delta, 1/2*( n_B_y[:,0]+n_B_y[:,1]+n_B_y[:,2]+n_B_y[:,3]), "-o",  label=r"$n_{s,x'x'}(\theta=\pi/2)$", color="black")
 
 
-
+    
 
 ax.set_title(r"$\lambda_R=$" + f"{np.round(Lambda_R,2)}"
              +r"; $\Delta=$" + f"{Delta}"
@@ -152,7 +161,8 @@ ax.set_title(r"$\lambda_R=$" + f"{np.round(Lambda_R,2)}"
              + r"; $g_{yy}=$" + f"{g_yy}"
              + r"; $g_{xy}=$" + f"{g_xy}"
              + r"$; g_{yx}=$" + f"{g_yx}"
-             + r"; $\beta=$" + f"{beta}")
+             + r"; $\beta=$" + f"{beta}"
+             + f"; T={T}")
 
 ax.set_xlabel(r"$\frac{B}{\Delta*}$")
 ax.set_ylabel(r"$n_s$")

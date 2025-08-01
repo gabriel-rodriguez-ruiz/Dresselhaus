@@ -80,8 +80,8 @@ def get_superconducting_density_efficiently(L_x, L_y, w_0, mu, Delta, B_x, B_y, 
     k_x_values = np.cos(chi) * k_x - np.sin(chi) * k_y
     k_y_values = np.sin(chi) * k_x + np.cos(chi) * k_y
     phi = np.array([-h, 0, h])
-    phi_x_values = np.cos(chi) * phi - np.sin(chi) * phi
-    phi_y_values = np.sin(chi) * phi + np.cos(chi) * phi
+    phi_x_values = phi   #np.cos(chi) * phi - np.sin(chi) * phi
+    phi_y_values = phi   #np.sin(chi) * phi + np.cos(chi) * phi
     fundamental_energy = np.zeros((3, 3))
     for k, phi_x in enumerate(phi_x_values):
         for l, phi_y in enumerate(phi_y_values):
@@ -121,20 +121,20 @@ def integrate(theta):
     n_theta[0], n_theta[1], n_theta[2], n_theta[3] = get_superconducting_density_efficiently(L_x, L_y, w_0, mu, Delta, B_x, B_y, Lambda_R, Lambda_D, h, beta, T, chi)
     return n_theta
 
-L_x = 2500
-L_y = 2500
-w_0 = 100 #meV
+L_x = 2000
+L_y = 2000
+w_0 = 10 #meV
 Delta = 0.08 # meV ###############Normal state
 mu = -3.49*w_0 	#2*(20*Delta-2*w_0)
-B = 2 * Delta #0.050/0.035 * Delta
+B = 0.8 * Delta #0.050/0.035 * Delta
 a = 3.08e-07 * np.sqrt(1)#3.08e-07 # cm
 n = 8.5e11 # 1/cm**2
 k_F = np.sqrt(2*np.pi*n) # 1/cm
-Lambda_R = 0.56  #5*Delta/(k_F*a)    #0.56#5*Delta/np.sqrt((4*w_0 + mu)/w_0)/2
+Lambda_R = 0.056#0.56  #5*Delta/(k_F*a)    #0.56#5*Delta/np.sqrt((4*w_0 + mu)/w_0)/2
 Lambda_D = 0
 h = 1e-3
 beta = 1000
-T = True
+T = False
 chi = 0
 k_x_values = 2*np.pi/L_x*np.arange(0, L_x)
 k_y_values = 2*np.pi/L_y*np.arange(0, L_y)
@@ -142,8 +142,8 @@ g_xx = 1
 g_xy = 0
 g_yy = 1
 g_yx = 0
-n_cores = 8
-points = 2*n_cores
+n_cores = 16
+points = 1*n_cores
 params = {"L_x": L_x, "L_y": L_y, "w_0": w_0,
           "mu": mu, "Delta": Delta,
            "Lambda_R": Lambda_R,
@@ -162,7 +162,7 @@ if __name__ == "__main__":
     
     data_folder = Path("Data/")
     
-    name = f"n_theta_mu_{mu}_L={L_x}_h={h}_theta_in_({np.min(theta_values)}-{np.round(np.max(theta_values),3)})B={np.round(B,2)}_Delta={Delta}_lambda_R={Lambda_R}_lambda_D={Lambda_D}_g_xx={g_xx}_g_xy={g_xy}_g_yy={g_yy}_g_yx={g_yx}_points={points}.npz"
+    name = f"n_theta_mu_{mu}_L={L_x}_h={h}_theta_in_({np.min(theta_values)}-{np.round(np.max(theta_values),3)})B={np.round(B,2)}_Delta={Delta}_lambda_R={Lambda_R}_lambda_D={Lambda_D}_g_xx={g_xx}_g_xy={g_xy}_g_yy={g_yy}_g_yx={g_yx}_points={points}_chi_equal_theta.npz"
     file_to_open = data_folder / name
     np.savez(file_to_open , n_theta=n_theta, theta_values=theta_values,
              **params)
